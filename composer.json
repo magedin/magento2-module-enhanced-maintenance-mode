@@ -1,0 +1,27 @@
+{
+    "name": "magedin/module-enhanced-maintenance-mode",
+    "version": "1.0.0",
+    "description": "This module enhances the maintenance mode in Magento.",
+    "type": "magento2-module",
+    "require": {
+        "php": "^7.3||^8.0",
+        "magento/framework": "*"
+    },
+    "license": [
+        "OSL-3.0"
+    ],
+    "authors": [
+        {
+            "name": "MagedIn Technology",
+            "email": "support@magedin.com"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "MagedIn\\MaintenanceMode\\": ""
+        }
+    }
+}
