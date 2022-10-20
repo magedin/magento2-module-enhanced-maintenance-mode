@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace MagedIn\EnhancedMaintenanceMode\Plugin\Magento\Framework\App;
 
+use MagedIn\EnhancedMaintenanceMode\Model\Config;
 use MagedIn\EnhancedMaintenanceMode\Model\MaintenanceMode;
 use Magento\Framework\App\MaintenanceMode as Subject;
 use Magento\Framework\Exception\LocalizedException;
@@ -27,12 +28,20 @@ class MaintenanceModePlugin
     private $maintenanceMode;
 
     /**
+     * @var Config
+     */
+    private $config;
+
+    /**
      * @param MaintenanceMode $maintenanceMode
+     * @param Config $config
      */
     public function __construct(
-        MaintenanceMode $maintenanceMode
+        MaintenanceMode $maintenanceMode,
+        Config $config
     ) {
         $this->maintenanceMode = $maintenanceMode;
+        $this->config = $config;
     }
 
     /**
@@ -59,6 +68,6 @@ class MaintenanceModePlugin
      */
     private function isModuleEnabled(): bool
     {
-        return true;
+        return $this->config->isEnabled();
     }
 }
