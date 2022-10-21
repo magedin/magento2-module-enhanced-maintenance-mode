@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace MagedIn\EnhancedMaintenanceMode\Model;
 
 use MagedIn\EnhancedMaintenanceMode\Console\Command\ScopeProvider;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\StoreManagerInterface;
 
 class FlagFilesProvider
@@ -44,28 +43,29 @@ class FlagFilesProvider
 
     /**
      * @return array
-     * @throws LocalizedException
      */
     public function getFlagFiles(): array
     {
-        return [
+        return array_filter([
             $this->getStoreFlagFile(),
             $this->getWebsiteFlagFile(),
-        ];
+        ]);
     }
 
     /**
-     * @param string $code
+     * @param string|null $code
      * @return string
      */
-    private function buildFileName(string $code): string
+    private function buildFileName(string $code = null): ?string
     {
+        if (empty($code)) {
+            return null;
+        }
         return ".maintenance.$code.flag";
     }
 
     /**
      * @return string
-     * @throws LocalizedException
      */
     public function getWebsiteFlagFile(): string
     {
@@ -74,7 +74,6 @@ class FlagFilesProvider
 
     /**
      * @return string
-     * @throws LocalizedException
      */
     private function getWebsiteFlagCode(): string
     {
@@ -83,7 +82,6 @@ class FlagFilesProvider
 
     /**
      * @return string
-     * @throws LocalizedException
      */
     public function getStoreFlagFile(): string
     {
@@ -92,7 +90,6 @@ class FlagFilesProvider
 
     /**
      * @return string
-     * @throws LocalizedException
      */
     private function getStoreFlagCode(): string
     {
@@ -101,7 +98,6 @@ class FlagFilesProvider
 
     /**
      * @return string
-     * @throws LocalizedException
      */
     public function getScopeFlagFile(): string
     {
@@ -123,27 +119,33 @@ class FlagFilesProvider
 
     /**
      * @return string
-     * @throws LocalizedException
      */
-    private function getWebsiteCode(): string
+    private function getWebsiteCode(): ?string
     {
         $websiteCode = $this->scopeProvider->getCode();
         if ($websiteCode) {
             return $websiteCode;
         }
-        return $this->storeManager->getWebsite()->getCode();
+        try {
+            return $this->storeManager->getWebsite()->getCode();
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**
      * @return string
-     * @throws LocalizedException
      */
-    private function getStoreCode(): string
+    private function getStoreCode(): ?string
     {
         $storeCode = $this->scopeProvider->getCode();
         if ($storeCode) {
             return $storeCode;
         }
-        return $this->storeManager->getStore()->getCode();
+        try {
+            return $this->storeManager->getStore()->getCode();
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 }

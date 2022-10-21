@@ -14,10 +14,10 @@ declare(strict_types=1);
 
 namespace MagedIn\EnhancedMaintenanceMode\Model;
 
-use MagedIn\EnhancedMaintenanceMode\Console\Command\ScopeProvider;
 use Magento\Framework\App\MaintenanceMode as MaintenanceModeBase;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Event\Manager;
+use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem;
 
 class MaintenanceMode extends MaintenanceModeBase
@@ -65,10 +65,9 @@ class MaintenanceMode extends MaintenanceModeBase
     }
 
     /**
-     * Sets maintenance mode "on" or "off"
-     *
      * @param bool $isOn
      * @return bool
+     * @throws FileSystemException
      */
     public function set($isOn)
     {
