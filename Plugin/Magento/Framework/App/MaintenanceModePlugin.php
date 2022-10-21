@@ -57,7 +57,7 @@ class MaintenanceModePlugin
         if (!$this->isModuleEnabled()) {
             return $proceed($remoteAddr);
         }
-        if(!$this->maintenanceMode->assertScopedMaintenanceMode($subject, $remoteAddr)) {
+        if (!$this->maintenanceMode->assertScopedMaintenanceMode($subject, $remoteAddr)) {
             return $proceed($remoteAddr);
         }
         return true;
