@@ -14,6 +14,10 @@ declare(strict_types=1);
 
 namespace MagedIn\EnhancedMaintenanceMode\Console\Command;
 
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Store\Model\StoreManagerInterface;
+
 class ScopeProvider
 {
     const SCOPE_WEBSITE = 'website';
@@ -27,14 +31,31 @@ class ScopeProvider
     /**
      * @var string|null
      */
-    private $code  = null;
+    private $code = null;
+
+    /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
+     * @param StoreManagerInterface $storeManager
+     */
+    public function __construct(
+        StoreManagerInterface $storeManager
+    ) {
+        $this->storeManager = $storeManager;
+    }
 
     /**
      * @param string $website
      * @return $this
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
     public function setScopeWebsite(string $website): self
     {
+        $this->validateScope(self::SCOPE_WEBSITE, $website);
         $this->scope = self::SCOPE_WEBSITE;
         $this->code = $website;
         return $this;
@@ -43,9 +64,12 @@ class ScopeProvider
     /**
      * @param string $store
      * @return $this
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
     public function setScopeStore(string $store): self
     {
+        $this->validateScope(self::SCOPE_STORE, $store);
         $this->scope = self::SCOPE_STORE;
         $this->code = $store;
         return $this;
@@ -81,5 +105,22 @@ class ScopeProvider
     public function getCode(): string
     {
         return (string) $this->code;
+    }
+
+    /**
+     * @param string $scopeType
+     * @param string $scopeCode
+     * @return bool
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     */
+    private function validateScope(string $scopeType, string $scopeCode): bool
+    {
+        if ($scopeType === self::SCOPE_WEBSITE) {
+            $this->storeManager->getWebsite($scopeCode)->getCode();
+        } elseif ($scopeType === self::SCOPE_STORE) {
+            $this->storeManager->getStore($scopeCode)->getCode();
+        }
+        return true;
     }
 }
